@@ -1,11 +1,16 @@
 % Specify the audio file you want to use:
 fname = '../soundFiles/OceanWaves.wav';
-[y,fs]=audioread(fname);
+%[y,fs]=audioread(fname);
 
 
-data_fft =fft(y);
-datashift = fftshift(data_fft);
-plot(abs(datashift(:,1)));
+
+%y = y(1:2000000,1);
+
+data_fft =fft(yt);
+data_fft = data_fft(1:62500*0.6);
+plot(abs(data_fft(:,1)));
+%datashift = fftshift(data_fft);
+%plot(abs(datashift(:,1)));
 
 % Display the sampling info and length
 sz = size(y);
@@ -21,8 +26,8 @@ end;
 x = [0:1/fs:(n-1)/fs];
 
 % Display the graph
-figure; plot(x,y(1:n));
+figure; plot(x(1:1200),y(1:1200));
 
 % Play the sea sound
-player = audioplayer(y,fs);
-play(player);
+player = audioplayer(yt,fs);
+%play(player);
