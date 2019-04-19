@@ -1,33 +1,29 @@
 % Specify the audio file you want to use:
-fname = '../soundFiles/OceanWaves.wav';
-%[y,fs]=audioread(fname);
-
-
+fname = '../soundFiles/wind2.wav';
+[y,fs]=audioread(fname);
 
 %y = y(1:2000000,1);
 
-data_fft =fft(yt);
-data_fft = data_fft(1:62500*0.6);
-plot(abs(data_fft(:,1)));
-%datashift = fftshift(data_fft);
-%plot(abs(datashift(:,1)));
+n=500000;
 
-% Display the sampling info and length
-sz = size(y);
-n  = sz(1);
-%disp('File: %s\nSamples: %d\nTime   : %d s\n',fname,n,n/fs);
+L = 125000;
+freq_k = ([0:1:L-1])';
+freq_hz = freq_k*(fs/length(y));
 
-% If longer than 500,000 samples cut if down else things are too slow!
-if (n>500000)
-   n=500000;
-end;
+data_fft =fft(y);
+data_fft = data_fft(1:L);
+plot(freq_hz,abs(data_fft(:,1)));
+xlabel("Frequency [Hz]");
+ylabel("Magnitude");
 
 % create time stamps for graph
 x = [0:1/fs:(n-1)/fs];
 
 % Display the graph
-figure; plot(x(1:1200),y(1:1200));
+%figure; plot(x,y(1:n));
+xlabel("Time [s]");
+ylabel("Magnitude");
 
 % Play the sea sound
-player = audioplayer(yt,fs);
+player = audioplayer(y,fs);
 %play(player);
