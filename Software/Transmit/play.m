@@ -24,7 +24,6 @@ x=sigma*randn(L,1)+mu;
 noise = conv(x,impresp); % bandlimit the noise
 noise = noise(1:L);
 
-
 %------------------Build final signal------------
 y1 = (noise.*w1);%+(noise.*w3);
 %y2 = (noise.*w2);
