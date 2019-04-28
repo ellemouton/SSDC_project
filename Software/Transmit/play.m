@@ -1,7 +1,7 @@
 close all;
 
 L=1000000; %Sample length for the random signal
-fs = 48000;%44100; 
+fs = 48000;%44100;
 n = linspace(0,L-1,L);
 
 %--------------------carriers---------------------
@@ -43,5 +43,7 @@ data_fft = data_fft(1:L/10);
 plot(abs(data_fft(:,1)));
 
 %------------------Play dem tunes----------------
-player = audioplayer(y,fs);
-play(player);
+
+% player = audioplayer(y,fs);
+% play(player);
+% sound(y,fs)
