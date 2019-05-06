@@ -5,7 +5,7 @@ function y=noise_bubble(len)
     x=sigma*randn(len,1)+mu;
 
     % load("Filters/EllesFitler48k.mat");
-    load("Filters/lowpass16k200.mat");
+    load("Filters/low16k1300.mat");
 
     y=conv(x,impresp);
 
