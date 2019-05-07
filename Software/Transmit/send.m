@@ -1,21 +1,18 @@
 % function send(message)
-    message = "hello this is a message"
+    message = "elle is on drugs"
     Debugging = true;               % Disable debugging printouts
     ampDiff = 3/5;            % Difference between size of first and second peak (Elle change to 1)
     maxAmp = 1/(1+ampDiff+ampDiff*ampDiff+ampDiff*ampDiff*ampDiff);   % Total amplitude made by output x/(dont touch)
-    sampleRate = 16000;             % sample rate (Elle change to 48000)
+    sampleRate = 48000;             % sample rate (Elle change to 48000)
     bitRate = 2;                  % Bits sent every x seconds
     heightMult = 1/2;               % The multiplier creating the diffence between 1 and 0
-    heightMult = 0;               % The multiplier creating the diffence between 1 and 0
     peakOne = 250;                  % frequency of first  peak
     peakTwo = 2250;                  % frequency of second peak
     peakThree = 4250;                  % frequency of second peak
     peakFour = 6250;
-    oscillatorFreq = 0.5;             % Frequency of the oscillator
+    oscillatorFreq = 0.25;             % Frequency of the oscillator
     trans = 1;
 
-    syms t
-    signal(t) = sin(2*3.14159*t);
 
     % ==================================================================
     % Load huffmanCode
@@ -53,19 +50,19 @@
     % ==================================================================
 
     rang = transpose(linspace(1,bitRate,sampleRate*bitRate));
-    waveOne     = eval(signal(peakOne   * rang));
+    waveOne     = sin(2* pi * peakOne   * rang);
     if(Debugging)
         fprintf("Wave one complete\n");
     end
-    waveTwo     = eval(ampDiff*signal(peakTwo   * rang));
+    waveTwo     = ampDiff*sin(2* pi * peakTwo * rang);
     if(Debugging)
         fprintf("Wave two complete\n");
     end
-    waveThree   = eval(ampDiff*ampDiff*signal(peakThree * rang));
+    waveThree   = ampDiff*ampDiff*sin(2* pi * peakThree * rang);
     if(Debugging)
         fprintf("Wave three complete\n");
     end
-    waveFour    = eval(ampDiff*ampDiff*ampDiff*signal(peakFour  * rang));
+    waveFour    = ampDiff*ampDiff*ampDiff*sin(2* pi * peakFour  * rang);
     if(Debugging)
         fprintf("Wave four complete\n");
     end
@@ -213,7 +210,11 @@
             if(this(1)<next(1))
                 transArray = peakOneTrans;
             elseif(this(1)==next(1))
-                transArray = maxAmp*waveOne(1:sampleRate*trans);
+                if(this(1)=='0')
+                    transArray = heightMult*maxAmp*waveOne(1:sampleRate*trans);
+                else
+                    transArray = maxAmp*waveOne(1:sampleRate*trans);
+                end
             else
                 transArray = flip(peakOneTrans);
             end
@@ -221,7 +222,11 @@
             if(this(2)<next(2))
                 transArray = transArray + peakTwoTrans;
             elseif(this(2)==next(2))
-                transArray = transArray + maxAmp*waveTwo(1:sampleRate*trans);
+                if(this(2)=='0')
+                    transArray = transArray + heightMult*maxAmp*waveTwo(1:sampleRate*trans);
+                else
+                    transArray = transArray + maxAmp*waveTwo(1:sampleRate*trans);
+                end
             else
                 transArray = transArray + flip(peakTwoTrans);
             end
@@ -229,7 +234,11 @@
             if(this(3)<next(3))
                 transArray = transArray + peakThreeTrans;
             elseif(this(3)==next(3))
-                transArray = transArray + maxAmp*waveThree(1:sampleRate*trans);
+                if(this(3)=='0')
+                    transArray = transArray + heightMult*maxAmp*waveThree(1:sampleRate*trans);
+                else
+                    transArray = transArray + maxAmp*waveThree(1:sampleRate*trans);
+                end
             else
                 transArray = transArray + flip(peakThreeTrans);
             end
@@ -237,7 +246,11 @@
             if(this(4)<next(4))
                 transArray = transArray + peakFourTrans;
             elseif(this(4)==next(4))
-                transArray = transArray + maxAmp*waveFour(1:sampleRate*trans);
+                if(this(4)=='0')
+                    transArray = transArray + heightMult*maxAmp*waveFour(1:sampleRate*trans);
+                else
+                    transArray = transArray + maxAmp*waveFour(1:sampleRate*trans);
+                end
             else
                 transArray = transArray + flip(peakFourTrans);
             end
@@ -267,9 +280,9 @@
     % filtering noise away from 0Hz
     % ==================================================================
 
-    load("Filters/high16k100.mat");
-    finalOut = conv(finalOut, impresp);
-    finalOut = finalOut(1:finalLength);
+    % load("Filters/high16k100.mat");
+    % finalOut = conv(finalOut, impresp);
+    % finalOut = finalOut(1:finalLength);
 
     % ==================================================================
     % Adding a little bit more noise accross entire band
@@ -331,5 +344,8 @@
     plot(finalOut);
 
 
-    % sound(finalOut, sampleRate);
+    if(Debugging)
+        fprintf("Play time: %f\n",length(finalOut)/sampleRate);
+    end
+    sound(finalOut, sampleRate);
 % end
