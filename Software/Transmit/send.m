@@ -1,11 +1,11 @@
-% function send(message)
-    message = "elle is on drugs"
+ function send(message)
+    message = "super dooper long test";
     Debugging = true;               % Disable debugging printouts
     ampDiff = 3/5;            % Difference between size of first and second peak (Elle change to 1)
     maxAmp = 1/(1+ampDiff+ampDiff*ampDiff+ampDiff*ampDiff*ampDiff);   % Total amplitude made by output x/(dont touch)
     sampleRate = 48000;             % sample rate (Elle change to 48000)
     bitRate = 2;                  % Bits sent every x seconds
-    heightMult = 1/2;               % The multiplier creating the diffence between 1 and 0
+    heightMult = 1/3;               % The multiplier creating the diffence between 1 and 0
     peakOne = 250;                  % frequency of first  peak
     peakTwo = 2250;                  % frequency of second peak
     peakThree = 4250;                  % frequency of second peak
@@ -43,7 +43,7 @@
     end
 
 
-    finalLength = ceil((length(stream)/4-2)*sampleRate*trans+length(stream)*sampleRate*bitRate/4);    % length of final output
+    finalLength = ceil((length(stream)/4-1)*sampleRate*trans+length(stream)*sampleRate*bitRate/4);    % length of final output
 
     % ==================================================================
     % assigning arrays
@@ -201,7 +201,7 @@
             fprintf("error\n");
         end
 
-        if(i<length(stream)-7)
+        if(i<length(stream)-4)
             transArray = zeros(sampleRate*trans,1);
             nextString = strcat(stream(i+4),stream(i+5),stream(i+6),stream(i+7));
             this = char(string);
@@ -292,10 +292,10 @@
     x=sigma*randn(finalLength,1)+mu;
     finalOut = finalOut+0.015*x;
 
-    % load("Filters/high16k8000.mat");
-    % xx = conv(x, impresp);
-    % xx = xx(1:finalLength);
-    % finalOut = finalOut+xx;
+%     load("Filters/high16k8000.mat");
+%     xx = conv(x, impresp);
+%     xx = xx(1:finalLength);
+%     finalOut = finalOut+xx;
 
     % ==================================================================
     % final oscillator
@@ -308,7 +308,7 @@
     % ==================================================================
     % PLOTTING for this to work send "oa"
     % ==================================================================
-    if(Debugging || false)
+    if(Debugging && false)
         fprintf("plotting.\n");
         subplot(4,1,1);
         y = finalOut(1:bitRate*sampleRate);
@@ -347,5 +347,8 @@
     if(Debugging)
         fprintf("Play time: %f\n",length(finalOut)/sampleRate);
     end
+    
+    audiowrite(char(strcat("../soundFiles/encoded_data.wav")),finalOut,sampleRate);
     sound(finalOut, sampleRate);
-% end
+    
+ end
