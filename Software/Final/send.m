@@ -13,7 +13,6 @@
     oscillatorFreq = 0.25;             % Frequency of the oscillator
     trans = 1;
 
-
     % ==================================================================
     % Load huffmanCode
     % ==================================================================
@@ -111,7 +110,7 @@
     % Creating output
     % ==================================================================
     counter = 1;
-    outputArray = []
+    outputArray = [];
     for i=1:4:length(stream)
         string = strcat(stream(i),stream(i+1),stream(i+2),stream(i+3));
 
@@ -339,16 +338,11 @@
         ylim([-75 75]);
     end
 
-    X = fft(finalOut);
-
-    plot(finalOut);
-
-
     if(Debugging)
         fprintf("Play time: %fs\n",length(finalOut)/sampleRate);
     end
     
-    audiowrite(char(strcat("../soundFiles/encoded_data.wav")),finalOut,sampleRate);
+    audiowrite(char(strcat("encoded_data.wav")),finalOut,sampleRate);
     sound(finalOut, sampleRate);
     
  end
