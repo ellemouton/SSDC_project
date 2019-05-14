@@ -348,7 +348,7 @@
         fprintf("Play time: %f\n",length(finalOut)/sampleRate);
     end
     
-    audiowrite(char(strcat("../soundFiles/encoded_data.wav")),finalOut,sampleRate);
-    sound(finalOut, sampleRate);
+    %audiowrite(char(strcat("../soundFiles/encoded_data.wav")),finalOut,sampleRate);
+    %sound(finalOut, sampleRate);
     
  end

@@ -16,6 +16,7 @@
     % ==================================================================
     % Load huffmanCode
     % ==================================================================
+    
     charMessage = char(message);
 
     stringstream = huffmanEncode(charMessage);
@@ -43,7 +44,7 @@
 
 
     finalLength = ceil((length(stream)/4-1)*sampleRate*trans+length(stream)*sampleRate*bitRate/4);    % length of final output
-
+    
     % ==================================================================
     % assigning arrays
     % ==================================================================
@@ -83,7 +84,7 @@
     oooz = (maxAmp           )*waveOne + (maxAmp           )*waveTwo + (maxAmp           )*waveThree + (maxAmp*heightMult)*waveFour;
     oooo = (maxAmp           )*waveOne + (maxAmp           )*waveTwo + (maxAmp           )*waveThree + (maxAmp           )*waveFour;
 
-
+    %finalLength = finalLength + length(oooo);
 
     % ==================================================================
     % Defining transision arrays
@@ -94,6 +95,7 @@
     peakThreeTrans  = zeros(trans*sampleRate,1);
     peakFourTrans   = zeros(trans*sampleRate,1);
     transLine = linspace(heightMult, 1, trans*sampleRate);
+    
     for i=1:trans*sampleRate
         peakOneTrans(i)     = maxAmp*transLine(i)*waveOne(i);
         peakTwoTrans(i)     = maxAmp*transLine(i)*waveTwo(i);
@@ -110,6 +112,7 @@
     % Creating output
     % ==================================================================
     counter = 1;
+    %outputArray = oooo;
     outputArray = [];
     for i=1:4:length(stream)
         string = strcat(stream(i),stream(i+1),stream(i+2),stream(i+3));
@@ -343,6 +346,6 @@
     end
     
     audiowrite(char(strcat("encoded_data.wav")),finalOut,sampleRate);
-    sound(finalOut, sampleRate);
+    %sound(finalOut, sampleRate);
     
  end

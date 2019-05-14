@@ -1,27 +1,43 @@
 function receive()
-    filename = 'encoded_data.wav';
-    bitRate = 2;                % Bits sent every x seconds
-    transRate = 1;              % transition periods in seconds
-    p1 = 500;                   % frequency of first  peak
-    p2 = 1700;                  % frequency of second peak
-    p3 = 2500;                  % frequency of third peak
-    p4 = 3700;                  % frequency of fourth peak
-
-    % ==================================================================
-    % load the sound file and break into chunks
-    % ==================================================================
-
-    [y,sampleRate]=audioread(filename);
-    len_bit_piece = sampleRate*bitRate;
-    len_transition = sampleRate*transRate;
-    num_chunks = ceil(length(y)/(len_bit_piece+len_transition));
+    filename = 'encoded_data.wav';  %file to read audio from 
+    bitRate = 2;                    % four Bits sent every x seconds
+    transRate = 1;                  % transition periods in seconds
     
     % ==================================================================
-    % new array without transitions
+    % define the frequencies that the bands will be centered around
+    % ==================================================================
+    
+    p1 = 500;                       % frequency of first  peak
+    p2 = 1700;                      % frequency of second peak
+    p3 = 2500;                      % frequency of third peak
+    p4 = 3700;                      % frequency of fourth peak
+
+    % ==================================================================
+    % load the sound file 
+    % ==================================================================
+
+    [y,sampleRate]=audioread(filename);      %load audio into array y 
+    len_bit_piece = sampleRate*bitRate;      %length of time that each group of 4 bits will be sent for
+    len_transition = sampleRate*transRate;   %length of time that each transition period will be
+    
+%     y_thresh = y(1:len_bit_piece);
+%     y = y(len_bit_piece-1: length(y));
+    num_chunks = ceil(length(y)/(len_bit_piece+len_transition)); % number of 4 bit groups that are beign received
+    
+    % ==================================================================
+    % find the thresholds for each band based on start sequence
+    % ==================================================================
+%     thresh1 = bandpower(y_thresh, sampleRate, [p1-400 p1+400])*10000*4/6;
+%     thresh2 = bandpower(y_thresh, sampleRate, [p2-400 p2+400])*10000*1.2;
+%     thresh3 = bandpower(y_thresh, sampleRate, [p3-400 p3+400])*10000*1.2;
+%     thresh4 = bandpower(y_thresh, sampleRate, [p4-400 p4+400])*10000*2;
+    
+    % ==================================================================
+    % create a new array, y_cut, that will not include the transition
+    % periods.
     % ==================================================================
     
     y_cut = zeros(num_chunks*len_bit_piece,1);
-    
     
     for i = 1:num_chunks
         if(i<num_chunks)
@@ -35,22 +51,21 @@ function receive()
        y_cut(new_index:new_index+len_bit_piece-1) =  y(old_index: old_index+len_bit_piece-1);
     end
     
+    % ====================================================================
+    % Reshape the y_cut array so that it is a 2D array where every column 
+    % represents a new data segment (where a new set of 4 bits is encoded)
+    % ====================================================================
+    
     y_split = reshape(y_cut, len_bit_piece, num_chunks);
     
-    % ==================================================================
-    % loop over each chunk, calculate bandpower and classify
-    % ==================================================================
-    thresh1 = 8;
-    thresh2 = 1.6;
-    thresh3 = 0.6;
-    thresh4 = 0.1;
+    % ====================================================================
+    % loop over each chunk, calculate the bandpower in all the predefined 
+    % frequency bands and classify each band based on the thresholds
+    % ====================================================================
+    
+    thresh1 = 8; thresh2 = 1.6; thresh3 = 0.6; thresh4 = 0.1;
    
     final = "";
-    
-    bp1 = 0;
-    bp2 = 0;
-    bp3 = 0;
-    bp4 = 0;
     
     for i = 1:num_chunks
        sample =  y_split(:,i);
@@ -84,14 +99,11 @@ function receive()
        end
        
     end
-%     N = 10000;
-%     yt =y_split(:,1);
-%     freq_k = ([0:1:N-1])';
-%     freq_hz = freq_k*(sampleRate/length(yt));
-% 
-%     data_fft4 =fft(yt);
-%     data_fft4 = data_fft4(1:N);
-%     plot(freq_hz,abs(data_fft4(:,1)));
+    
+    % ============================================================
+    % pass the final bitstream to the huffman decoding algorithm
+    % to get the decoded message back
+    % ============================================================
     
     message = huffmanDecode(char(final));
     fprintf(final+"\n");
